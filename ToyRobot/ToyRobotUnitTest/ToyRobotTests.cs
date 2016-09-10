@@ -147,25 +147,31 @@ namespace ToyRobot.Tests
         /// The goal here is only to make sure different command types are corrected interpreted.
         /// </summary>
         [TestMethod()]
-        public void InterpretCommandTest()
+        public void InterpretCommandTest_Throw()
         {
             ToyTable tb = ToyTableTests.ToyTableCreate_successtest(300, 500);
             ToyRobot robot = new ToyRobot(tb);
             // test in valid commands
-            AssertInvalidRobotCommandException(()=> { robot.InterpretCommand("");});
+            AssertInvalidRobotCommandException(() => { robot.InterpretCommand(""); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("blahblah asd ad 123e 123 312 ,1,1,,1"); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE123"); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE 123"); });
-            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE 123,2,NROTH");});
+            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE 123,2,NROTH"); });
+            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE X, ,NORTH"); });
+            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE ,,"); });
+            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE 3xs2,xxa,SOUTH"); });
             //negative values
-            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE -123,-23,NORTH"); });
+            AssertOutofBoundException(() => { robot.InterpretCommand("PLACE -123,-23,NORTH"); });
             //testing limits
-            AssertInvalidRobotCommandException(() => { robot.InterpretCommand($"PLACE {int.MaxValue},{int.MinValue},NORTH"); });
+            AssertOutofBoundException(() => { robot.InterpretCommand($"PLACE {int.MaxValue},{int.MinValue},NORTH"); });
+            AssertOutofBoundException(() => { robot.InterpretCommand($"PLACE {int.MinValue},{int.MinValue},NORTH"); });
+            AssertOutofBoundException(() => { robot.InterpretCommand($"PLACE {int.MinValue},{int.MaxValue},NORTH"); });
+            AssertOutofBoundException(() => { robot.InterpretCommand($"PLACE {int.MaxValue},{int.MaxValue},NORTH"); });
             //make sure interpreter throws for overflow
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand($"PLACE {int.MaxValue}3213,{int.MinValue}3213,NORTH"); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE     !@#!@#()_@!#(<<<mmm,,,,,,,"); });
             //out of bound
-            AssertInvalidRobotCommandException(() => { robot.InterpretCommand("PLACE 4123,23,NORTH"); });
+            AssertOutofBoundException(() => { robot.InterpretCommand("PLACE 4123,23,NORTH"); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("   PLACE      "); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand(" MOVE bassdasd "); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("REPORT bassdasd "); });
@@ -173,6 +179,15 @@ namespace ToyRobot.Tests
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand(" LEFTba  s  sdasd "); });
             AssertInvalidRobotCommandException(() => { robot.InterpretCommand("RIGHT  sdsad "); });
 
+        }
+
+        [TestMethod()]
+        public void InterpretCommandTest_Success()
+        {
+            // init
+            ToyTable tb = ToyTableTests.ToyTableCreate_successtest(300, 500);
+            ToyRobot robot = new ToyRobot(tb);
+            // place report check
             robot.InterpretCommand("PLACE 99,230,EAST");
             TestLocation(robot, new CoordinateXY(99, 230), Direction.EAST);
             robot.InterpretCommand("REPORT");
@@ -190,6 +205,7 @@ namespace ToyRobot.Tests
             robot.InterpretCommand("REPORT");
             TestLocation(robot, new CoordinateXY(230, 99), Direction.SOUTH);
 
+            //move tests 
             robot.InterpretCommand("MOVE");
             TestLocation(robot, new CoordinateXY(230, 98), Direction.SOUTH);
             robot.InterpretCommand("MOVE");

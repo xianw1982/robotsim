@@ -3,7 +3,6 @@ namespace ToyRobot
 {
     using System;
     using System.Configuration;
-    using System.IO;
 
     class Program
     {
@@ -37,10 +36,9 @@ namespace ToyRobot
                
                 int tableRangeX = GetConfigIntValue(Configurations.TableLimitX, 5);
                 int tableRangeY = GetConfigIntValue(Configurations.TableLimitY, 5);
+
                 WelcomeMessage(tableRangeX, tableRangeY);
-
                 ToyTable tb = new ToyTable(tableRangeY, tableRangeX);
-
                 ToyRobot robot = new ToyRobot(tb);
                 StartUserInput(robot);
             }

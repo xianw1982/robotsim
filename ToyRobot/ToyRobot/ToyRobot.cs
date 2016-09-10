@@ -200,26 +200,29 @@ namespace ToyRobot
                 throw new InvalidRobotCommandException("PLACE " + arguments, "invalid number of arguments");
             }
 
+            int x = -1;
+            int y = -1;
+            Direction d = Direction.NORTH;
+
             try
             {
-                int x = int.Parse(args[0]);
-                int y = int.Parse(args[1]);
-                Direction d = ConvertStringToDirection(args[2]);
-
-                this.Place(new CoordinateXY(x, y), d);
+                x = int.Parse(args[0]);
+                y = int.Parse(args[1]);
+                d = ConvertStringToDirection(args[2]);
             }
             catch (Exception ex)
             {
                 throw new InvalidRobotCommandException("PLACE " + arguments, ex.Message);
             }
+
+            this.Place(new CoordinateXY(x, y), d);
         }
 
         /// <summary>
         /// Place function
         /// </summary>
-        /// <param name="x">x coordinate</param>
-        /// <param name="y">y coordinate</param>
-        /// <param name="f">facing direction</param>
+        /// <param name="targetLocation">coordinate of the new location robot to be placed</param>
+        /// <param name="f">direction we are facing</param>
         internal void Place(CoordinateXY targetLocation, Direction f = Direction.NORTH)
         {
             if (!_table.IsValidPlacement(targetLocation))
