@@ -16,7 +16,7 @@ namespace ToyRobot.Tests
         /// this covers constructor / report and placement tests
         /// </summary>
         [TestMethod()]
-        public void ToyRobot_interaltests()
+        public void ToyRobot_internal_tests()
         {
             try
             {
