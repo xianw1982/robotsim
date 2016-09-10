@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+// expose internals to toyrobotunittest
 [assembly: InternalsVisibleTo("ToyRobotUnitTest")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

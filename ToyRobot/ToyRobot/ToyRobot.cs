@@ -1,10 +1,29 @@
 /// <summary>
-/// Robot class
+/// ToyRobot class
+/// Once initialized the robot accepts the following commands: 
+///     PLACE X, Y, F
+///     MOVE
+///     LEFT
+///     RIGHT
+///     REPORT
+/// 
+/// - PLACE will put the toy robot on the table in position X, Y and facing NORTH,
+///   SOUTH, EAST or WEST.
+/// - The first valid command to the robot is a PLACE command, after that, any
+///  sequence of commands may be issued, in any order, including another PLACE
+///  command. The application should discard all commands in the sequence until
+///  a valid PLACE command has been executed.
+/// - MOVE will move the toy robot one unit forward in the direction it is
+///  currently facing.
+/// - LEFT and RIGHT will rotate the robot 90 degrees in the specified direction
+///  without changing the position of the robot.
+/// - REPORT will announce the X, Y and F of the robot to standard output
 /// </summary>
 namespace ToyRobot
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
 
     /// <summary>
     /// enum of valid robot commands
@@ -61,15 +80,15 @@ namespace ToyRobot
         }
 
         /// <summary>
+        /// Interpret user commands 
         /// few assumptions are made about the command which were not clearly specified in the requirements.
         /// 1. commands are not case sensitive
         /// 2. extra spaces in the command is skipped
         /// 3. commands that take no additional argument such as LEFT, MOVE, RIGHT and REPORT
         ///    will ignore any additional arguments provided.
         /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        public bool InterpretCommand(string command)
+        /// <param name="command">string based command</param>
+        public void InterpretCommand(string command, StreamWriter outStream = null)
         {
             KeyValuePair<Command, string> argument = ParseCommand(command);
 
@@ -89,15 +108,19 @@ namespace ToyRobot
                     break;
                 case (Command.REPORT):
                     string report = this.Report();
-                    Console.WriteLine(report);
+                    TextWriter targetOutputStream = (outStream ?? Console.Out);
+
+                    lock (targetOutputStream)
+                    {
+                        targetOutputStream.WriteLine(report);
+                        targetOutputStream.Flush();
+                    }
                     break;
                 default:
                     throw new InvalidRobotCommandException(
                         command,
                         string.Format("unsupported command {0}", argument.Key));
             }
-
-            return true;
         }
 
         /// <summary>

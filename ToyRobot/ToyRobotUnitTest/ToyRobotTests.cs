@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ToyRobot.Tests
 {
@@ -215,6 +216,51 @@ namespace ToyRobot.Tests
             robot.InterpretCommand("RIGHT");
             TestLocation(robot, new CoordinateXY(230, 97), Direction.SOUTH);
         }
+
+        [TestMethod()]
+        public void InterpretCommandTest_Output()
+        {
+            // init
+            ToyTable tb = ToyTableTests.ToyTableCreate_successtest(300, 500);
+            ToyRobot robot = new ToyRobot(tb);
+
+            using (MemoryStream ms = new MemoryStream())
+            using (StreamWriter sw = new StreamWriter(ms))
+            {
+                // place report check
+                robot.InterpretCommand("PLACE 99,230,EAST", sw);
+                robot.InterpretCommand("MOVE", sw);
+                robot.InterpretCommand("MOVE", sw);
+                robot.InterpretCommand("LEFT", sw);
+                robot.InterpretCommand("LEFT", sw);
+                robot.InterpretCommand("RIGHT", sw);
+                TestLocation(robot, new CoordinateXY(101, 230), Direction.NORTH);
+                robot.InterpretCommand("REPORT", sw);
+
+                ms.Seek(0,SeekOrigin.Begin);
+                StreamReader sr = new StreamReader(ms);
+                Assert.AreEqual("101,230,NORTH", sr.ReadToEnd().Trim());
+            }
+
+            // when report is not called nothing is written
+            using (MemoryStream ms = new MemoryStream())
+            using (StreamWriter sw = new StreamWriter(ms))
+            {
+                // place report check
+                robot.InterpretCommand("PLACE 99,230,EAST", sw);
+                robot.InterpretCommand("MOVE", sw);
+                robot.InterpretCommand("MOVE", sw);
+                robot.InterpretCommand("LEFT", sw);
+                robot.InterpretCommand("LEFT", sw);
+                robot.InterpretCommand("RIGHT", sw);
+                TestLocation(robot, new CoordinateXY(101, 230), Direction.NORTH);
+
+                ms.Seek(0, SeekOrigin.Begin);
+                StreamReader sr = new StreamReader(ms);
+                Assert.AreEqual("", sr.ReadToEnd());
+            }
+        }
+
 
         delegate void functiondelegate();
 

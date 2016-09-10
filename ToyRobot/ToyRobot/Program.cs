@@ -54,8 +54,8 @@ namespace ToyRobot
         {
             Console.WriteLine("Welcome to ToyRobot");
             Console.WriteLine($"Configuring {x}x{y} sized table");
-            Console.WriteLine($"Please Enter one of the following commands:");
-            Console.WriteLine($"PLACE X,Y,F | MOVE | LEFT | RIGHT | REPORT");
+            Console.WriteLine($"Please Enter one of the following commands (press ctl-c to exit):");
+            Console.WriteLine($"PLACE X,Y,F | MOVE | LEFT | RIGHT | REPORT ");
         }
 
         /// <summary>

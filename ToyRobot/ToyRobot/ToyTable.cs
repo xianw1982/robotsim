@@ -1,7 +1,6 @@
 /// <summary>
-/// Table Class
+/// ToyTable Class
 /// </summary>
-
 namespace ToyRobot
 {
     using System;

@@ -1,5 +1,4 @@
-﻿
-namespace ToyRobot
+﻿namespace ToyRobot
 {
     using System;
 
